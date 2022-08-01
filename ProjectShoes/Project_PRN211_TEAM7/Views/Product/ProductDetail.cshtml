@@ -1,0 +1,209 @@
+﻿@addTagHelper *,Microsoft.AspNetCore.Mvc.TagHelpers
+@using Project_PRN211_TEAM7.Models
+@model List<Product>
+@using Microsoft.AspNetCore.Http;
+
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+   <title>Shop</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mukta:300,400,700"> 
+    <link rel="stylesheet" href="~/fonts/icomoon/style.css">
+
+    <link rel="stylesheet" href="~/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/css/magnific-popup.css">
+    <link rel="stylesheet" href="~/css/jquery-ui.css">
+    <link rel="stylesheet" href="~/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="~/css/owl.theme.default.min.css">
+
+
+    <link rel="stylesheet" href="~/css/aos.css">
+
+    <link rel="stylesheet" href="~/css/style.css">
+    
+  </head>
+  <body>
+  
+  <div class="site-wrap">
+        <header class="site-navbar" role="banner">
+            <div class="site-navbar-top">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-6 col-md-4 order-2 order-md-1 site-search-icon text-left">
+                            <form action="" class="site-block-top-search">
+                                <span class="icon icon-search2"></span>
+                                <input type="text" class="form-control border-0" placeholder="Search">
+                            </form>
+                        </div>
+
+                        <div class="col-12 mb-3 mb-md-0 col-md-4 order-1 order-md-2 text-center">
+                            <div class="site-logo">
+                                <a asp-action="Index" asp-controller="Home" class="js-logo-clone">Shoppers</a>
+                            </div>
+                        </div>
+
+                        <div class="col-6 col-md-4 order-3 order-md-3 text-right">
+                            <div class="site-top-icons">
+                                <nav class="site-navigation text-right text-md-center">
+                                    <ul class="site-menu js-clone-nav d-none d-md-block">
+                                        @if (@Context.Session.GetString("username") != null)
+                                        {
+                                            <li class="has-children">
+                                                <a>Hello @Context.Session.GetString("username")</a>
+                                                <ul class="dropdown">
+                                                    <li><a asp-controller="User" asp-action="Profile">Profile</a></li>
+                                                    <li><a asp-controller="User" asp-action="ChangePass">Change Password</a></li>
+                                                    <li><a asp-controller="User" asp-action="Logout">Logout</a></li>
+                                                </ul>
+                                            </li>
+
+                                        }
+                                        else
+                                        {
+                                            <li><a asp-controller="User" asp-action="Login"><span class="icon icon-person"></span></a></li>
+
+                                        }
+                                        <li>
+                                            <a asp-controller="ShoppingCart" asp-action="Cart" class="site-cart">
+                                                <span class="icon icon-shopping_cart"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <nav class="site-navigation text-right text-md-center" role="navigation">
+                <div class="container">
+                    <ul class="site-menu js-clone-nav d-none d-md-block">
+                        <li class="active">
+                            <a asp-action="Index" asp-controller="Home">Home</a>
+                        </li>
+                        <li class="has-children">
+                            <a href="#">Brand</a>
+                            <ul class="dropdown">
+                                @foreach (var c in @ViewBag.Brand)
+                                {
+                                    <li><a href="/Product/Shop/@c.BrandId">@c.BrandName</a></li>
+                                }
+
+                            </ul>
+                        </li>
+                        <li><a asp-controller="Product" asp-action="Shop">Shop</a></li>
+                         @if (@Context.Session.GetString("role") != null && @Context.Session.GetString("role").Equals("admin"))
+                        {
+                            <li><a asp-controller="Admin" asp-action="ProductManage">ProductManage</a></li>
+                        }
+              
+                    </ul>
+                </div>
+            </nav>
+        </header>
+
+    <div class="bg-light py-3">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12 mb-0"><a asp-action="Index" asp-controller="Home">Home</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">@ViewBag.Product.ProductName</strong></div>
+        </div>
+      </div>
+    </div>  
+
+    <div class="site-section">
+      <div class="container">
+        <div class="row">
+
+          <div class="col-md-6">
+            <img src="~/images/@ViewBag.Product.Image" alt="Image" class="img-fluid" style="width:500px;height:400px"/>
+          </div>
+          <div class="col-md-6">
+              
+            <h2 class="text-black">@ViewBag.Product.ProductName</h2>
+            <p>@ViewBag.Product.Description</p>
+            <p><strong class="text-primary h4">$@ViewBag.Product.Price</strong></p>
+            <form asp-controller="ShoppingCart" asp-action="AddToCart" asp-route-id="@ViewBag.Product.ProductId" >
+
+            <div class="mb-1 d-flex">
+                SIZE &nbsp;&nbsp;&nbsp;&nbsp;
+                   @foreach(var s in @ViewBag.Sizes){
+              <label for="option-sm" class="d-flex mr-3 mb-3">
+                <span class="d-inline-block mr-2" style="top:-2px; position: relative;"><input type="radio" id="option-sm" name="sizes" value="@s.Size1"></span> <span class="d-inline-block text-black">@s.Size1</span>
+              </label>
+                           }
+            </div>
+            <p>Quantity &nbsp;&nbsp;&nbsp;&nbsp;<strong class="text-primary h4">@ViewBag.Quantity</strong></p>
+
+                  <div class="mb-5">
+                         <div class="input-group mb-3" style="max-width: 120px;">
+              <div class="input-group-prepend">
+                <button class="btn btn-outline-primary js-btn-minus" type="button">&minus;</button>
+              </div>
+              <input type="number" class="form-control text-center" value="1" name="SoLuong" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
+              <div class="input-group-append">
+                <button class="btn btn-outline-primary js-btn-plus" type="button">&plus;</button>
+              </div>
+            </div>
+                    </div>
+                    <p><button class="buy-now btn btn-sm btn-primary">Add To Cart</button></p>
+            </form>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="site-section block-3 site-blocks-2 bg-light">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-md-7 site-section-heading text-center pt-4">
+            <h2>Featured Products</h2>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="nonloop-block-3 owl-carousel">
+                @foreach(var p in Model){
+              <div class="item">
+                <div class="block-4 text-center">
+                  <figure class="block-4-image">
+                   <a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@p.ProductId"><img src="~/images/@p.Image" alt="Image placeholder" class="img-fluid" style="width:350px;height:300px"/></a> 
+                  </figure>
+                  <div class="block-4-text p-4">
+                    <h3><a asp-controller="Product" asp-action="ProductDetail" asp-route-id="@p.ProductId">@p.ProductName</a></h3>
+                    <p class="mb-0">Finding perfect t-shirt</p>
+                    <p class="text-primary font-weight-bold">$@p.Price</p>
+                  </div>
+                </div>
+              </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+   
+  </div>
+
+  <script src="~/js/jquery-3.3.1.min.js"></script>
+  <script src="~/js/jquery-ui.js"></script>
+  <script src="~/js/popper.min.js"></script>
+  <script src="~/js/bootstrap.min.js"></script>
+  <script src="~/js/owl.carousel.min.js"></script>
+  <script src="~/js/jquery.magnific-popup.min.js"></script>
+  <script src="~/js/aos.js"></script>
+
+  <script src="~/js/main.js"></script>
+    
+
+  </body>
+</html>
